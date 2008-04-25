@@ -139,6 +139,10 @@ void __init proc_root_init(void)
 #endif
 	proc_bus = proc_mkdir("bus", NULL);
 	proc_sys_init();
+	
+#ifdef CONFIG_WEB100_STATS
+	proc_web100_init();
+#endif
 }
 
 static int proc_root_getattr(struct vfsmount *mnt, struct dentry *dentry, struct kstat *stat

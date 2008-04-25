@@ -976,6 +976,10 @@ extern int proc_doulongvec_minmax(struct ctl_table *, int, struct file *,
 				  void __user *, size_t *, loff_t *);
 extern int proc_doulongvec_ms_jiffies_minmax(struct ctl_table *table, int,
 				      struct file *, void __user *, size_t *, loff_t *);
+#ifdef CONFIG_WEB100_STATS
+extern int web100_proc_dointvec_update(ctl_table *, int, struct file *,
+                                       void *, size_t *, loff_t *);
+#endif
 
 extern int do_sysctl (int __user *name, int nlen,
 		      void __user *oldval, size_t __user *oldlenp,
