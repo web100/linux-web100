@@ -694,5 +694,3 @@ config WEB100_NETLINK
 
 endif
 
-source "net/ipv4/ipvs/Kconfig"
-
