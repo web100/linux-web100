@@ -288,6 +288,16 @@ EXPORT_SYMBOL(sysctl_tcp_mem);
 EXPORT_SYMBOL(sysctl_tcp_rmem);
 EXPORT_SYMBOL(sysctl_tcp_wmem);
 
+#ifdef CONFIG_WEB100_NET100
+int sysctl_WAD_IFQ = 0;
+int sysctl_WAD_MaxBurst = 3;
+EXPORT_SYMBOL(sysctl_WAD_MaxBurst);
+#endif
+#ifdef CONFIG_WEB100_STATS
+int sysctl_web100_fperms = CONFIG_WEB100_FPERMS;
+int sysctl_web100_gid = CONFIG_WEB100_GID;
+#endif
+
 atomic_t tcp_memory_allocated;	/* Current allocated memory. */
 EXPORT_SYMBOL(tcp_memory_allocated);
 
@@ -755,8 +765,12 @@ new_segment:
 wait_for_sndbuf:
 		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
 wait_for_memory:
-		if (copied)
+		if (copied) {
 			tcp_push(sk, flags & ~MSG_MORE, mss_now, TCP_NAGLE_PUSH);
+#ifdef CONFIG_WEB100_STATS
+			web100_update_writeq(sk);
+#endif
+		}
 
 		if ((err = sk_stream_wait_memory(sk, &timeo)) != 0)
 			goto do_error;
@@ -1001,8 +1015,12 @@ new_segment:
 wait_for_sndbuf:
 			set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
 wait_for_memory:
-			if (copied)
+			if (copied) {
 				tcp_push(sk, flags & ~MSG_MORE, mss_now, TCP_NAGLE_PUSH);
+#ifdef CONFIG_WEB100_STATS
+				web100_update_writeq(sk);
+#endif
+			}
 
 			if ((err = sk_stream_wait_memory(sk, &timeo)) != 0)
 				goto do_error;
@@ -1369,6 +1387,9 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 			WARN_ON(!(flags & MSG_PEEK));
 			skb = skb->next;
 		} while (skb != (struct sk_buff *)&sk->sk_receive_queue);
+#ifdef CONFIG_WEB100_STATS
+		web100_update_recvq(sk);
+#endif
 
 		/* Well, if we have backlog, try to process it now yet. */
 
@@ -1668,6 +1689,8 @@ recv_urg:
 void tcp_set_state(struct sock *sk, int state)
 {
 	int oldstate = sk->sk_state;
+
+	WEB100_VAR_SET(tcp_sk(sk), State, web100_state(state));
 
 	switch (state) {
 	case TCP_ESTABLISHED:
@@ -2053,6 +2076,7 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 		} else {
 			tp->nonagle &= ~TCP_NAGLE_OFF;
 		}
+		WEB100_VAR_SET(tp, NagleEnabled, !tp->nonagle);
 		break;
 
 	case TCP_CORK:
@@ -2075,6 +2099,7 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
 				tp->nonagle |= TCP_NAGLE_PUSH;
 			tcp_push_pending_frames(sk);
 		}
+		WEB100_VAR_SET(tp, NagleEnabled, !tp->nonagle);
 		break;
 
 	case TCP_KEEPIDLE:
@@ -2884,6 +2909,10 @@ void __init tcp_init(void)
 	       tcp_hashinfo.ehash_size, tcp_hashinfo.bhash_size);
 
 	tcp_register_congestion_control(&tcp_reno);
+	
+#ifdef CONFIG_WEB100_STATS
+	web100_stats_init();
+#endif
 }
 
 EXPORT_SYMBOL(tcp_close);

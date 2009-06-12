@@ -101,6 +101,10 @@ extern spinlock_t proc_subdir_lock;
 
 extern void proc_root_init(void);
 
+#ifdef CONFIG_WEB100_STATS
+extern void proc_web100_init(void);
+#endif
+
 void proc_flush_task(struct task_struct *task);
 struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, struct nameidata *);
 int proc_pid_readdir(struct file * filp, void * dirent, filldir_t filldir);

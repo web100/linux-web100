@@ -409,6 +409,9 @@ struct tcp_sock {
 #endif
 
 	int			linger2;
+#ifdef CONFIG_WEB100_STATS
+	struct web100stats	*tcp_stats;
+#endif
 };
 
 static inline struct tcp_sock *tcp_sk(const struct sock *sk)

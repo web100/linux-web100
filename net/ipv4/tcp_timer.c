@@ -348,6 +348,7 @@ static void tcp_retransmit_timer(struct sock *sk)
 		}
 		NET_INC_STATS_BH(sock_net(sk), mib_idx);
 	}
+	WEB100_UPDATE_FUNC(tp, web100_update_timeout(sk));
 
 	if (tcp_use_frto(sk)) {
 		tcp_enter_frto(sk);
@@ -383,6 +384,7 @@ static void tcp_retransmit_timer(struct sock *sk)
 	 * the 120 second clamps though!
 	 */
 	icsk->icsk_backoff++;
+	WEB100_VAR_SET(tcp_sk(sk), CurTimeoutCount, icsk->icsk_backoff);
 	icsk->icsk_retransmits++;
 
 out_reset_timer:
