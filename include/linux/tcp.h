@@ -377,7 +377,7 @@ struct tcp_sock {
 	unsigned int		keepalive_time;	  /* time before keep alive takes place */
 	unsigned int		keepalive_intvl;  /* time interval between keep alive probes */
 
-	unsigned long last_synq_overflow; 
+	int			linger2;
 
 /* Receiver side RTT estimation */
 	struct {
@@ -407,7 +407,6 @@ struct tcp_sock {
 	struct tcp_md5sig_info	*md5sig_info;
 #endif
 
-	int			linger2;
 #ifdef CONFIG_WEB100_STATS
 	struct web100stats	*tcp_stats;
 #endif

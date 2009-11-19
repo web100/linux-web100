@@ -21,6 +21,8 @@
 #include <linux/sysctl.h>
 #include <linux/mount.h>
 
+#include "internal.h"
+
 #define WEB100MIB_BLOCK_SIZE	PAGE_SIZE - 1024
 
 extern __u32 sysctl_wmem_default;
