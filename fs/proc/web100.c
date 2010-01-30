@@ -752,7 +752,7 @@ void web100_proc_nlink_update(nlink_t nlink)
 	dput(dent);
 }
 
-int web100_proc_dointvec_update(ctl_table *ctl, int write, struct file *filp,
+int web100_proc_dointvec_update(ctl_table *ctl, int write,
                                void *buffer, size_t *lenp, loff_t *ppos)
 {
 	unsigned n, i;
@@ -764,7 +764,7 @@ int web100_proc_dointvec_update(ctl_table *ctl, int write, struct file *filp,
 	struct web100_file *p;
 	char name[NUMBUF_LEN];
 	
-	if ((err = proc_dointvec(ctl, write, filp, buffer, lenp, ppos)) != 0)
+	if ((err = proc_dointvec(ctl, write, buffer, lenp, ppos)) != 0)
 		return err;
 	
 	if ((web100_dent = web100_dir_dent()) == NULL)
