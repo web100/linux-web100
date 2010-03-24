@@ -340,12 +340,12 @@ void web100_stats_establish(struct sock *sk)
 	/* Let's set these here, since they can't change once the
 	 * connection is established.
 	 */
-	vars->LocalPort = inet->num;
-	vars->RemPort = ntohs(inet->dport);
+	vars->LocalPort = inet->inet_num;
+	vars->RemPort = ntohs(inet->inet_dport);
 	
 	if (vars->LocalAddressType == WC_ADDRTYPE_IPV4) {
-		vars->LocalAddress.v4addr = inet->rcv_saddr;
-		vars->RemAddress.v4addr = inet->daddr;
+		vars->LocalAddress.v4addr = inet->inet_rcv_saddr;
+		vars->RemAddress.v4addr = inet->inet_daddr;
 	}
 #if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 	else if (vars->LocalAddressType == WC_ADDRTYPE_IPV6) {
@@ -679,7 +679,7 @@ void __init web100_stats_init()
 	web100stats_ht =
 	  (struct web100stats **)alloc_large_system_hash("TCP ESTATS",
 							 sizeof (struct web100stats *),
-							 tcp_hashinfo.ehash_size,
+							 tcp_hashinfo.ehash_mask + 1,
 							 (num_physpages >= 128 * 1024) ?
 							   13 : 15,
 							 0, &order, NULL,
