@@ -338,6 +338,7 @@ static ssize_t connection_file_write(struct file *file,
 }
 
 static struct file_operations connection_file_fops = {
+	llseek:		default_llseek,
 	open:		connection_file_open,
 	release:	connection_file_release,
 	read:		connection_file_read,
