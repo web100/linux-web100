@@ -32,7 +32,7 @@
 #define WC_PERSIST_TIME	60
 
 /* BEWARE: The release process updates the version string */
-char *web100_version_string = "2.5.32 2000-git"
+char *web100_version_string = "2.5.33 2000-git"
 #ifdef CONFIG_WEB100_NET100
     " net100"
 #endif
