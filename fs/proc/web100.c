@@ -20,6 +20,7 @@
 #include <linux/init.h>
 #include <linux/sysctl.h>
 #include <linux/mount.h>
+#include <linux/pid_namespace.h>
 
 #include "internal.h"
 
@@ -740,7 +741,7 @@ static inline struct dentry *web100_dir_dent(void)
 	qstr.len = 6;
 	qstr.hash = full_name_hash(qstr.name, qstr.len);
 	
-	return d_lookup(proc_mnt->mnt_sb->s_root, &qstr);
+	return d_lookup(init_pid_ns.proc_mnt->mnt_sb->s_root, &qstr);
 }
 
 void web100_proc_nlink_update(nlink_t nlink)

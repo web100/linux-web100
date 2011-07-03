@@ -25,6 +25,7 @@
 #include <linux/string.h>
 #include <linux/proc_fs.h>
 #include <asm/atomic.h>
+#include <linux/spinlock.h>
 
 #define WC_INF32	0xffffffff
 
@@ -32,7 +33,7 @@
 #define WC_PERSIST_TIME	60
 
 /* BEWARE: The release process updates the version string */
-char *web100_version_string = "2.5.33 2000-git"
+char *web100_version_string = "2.5.34 2000-git"
 #ifdef CONFIG_WEB100_NET100
     " net100"
 #endif
@@ -41,7 +42,7 @@ char *web100_version_string = "2.5.33 2000-git"
 static void death_cleanup(unsigned long dummy);
 
 /* Global stats reader-writer lock */
-rwlock_t web100_linkage_lock = RW_LOCK_UNLOCKED;
+DEFINE_RWLOCK(web100_linkage_lock);
 
 /* Data structures for tying together stats */
 static int web100stats_next_cid;
@@ -52,7 +53,7 @@ struct web100stats *web100stats_first = NULL;
 
 static struct web100stats *death_slots[WC_DEATH_SLOTS];
 static int cur_death_slot;
-static spinlock_t death_lock = SPIN_LOCK_UNLOCKED;
+static DEFINE_SPINLOCK(death_lock);
 static struct timer_list stats_persist_timer = TIMER_INITIALIZER(death_cleanup, 0, 0);
 static int ndeaths;
 
